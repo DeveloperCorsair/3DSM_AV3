@@ -9,9 +9,6 @@ padrões de projeto **Strategy**, **Template Method**, **Observer** e **Visitor*
 
 - **Node.js** (LTS) + **TypeScript em modo estrito** (`strict: true`)
 - **Fastify** para a camada HTTP
-- Persistência via interface `RepositorioProfissionais`
-- Comunicação interna via `EventEmitter` nativo, abstraída atrás da interface
-  `Barramento`
 - **Vitest** para testes unitários e de integração.
 
 ## Estrutura de pastas
@@ -30,7 +27,6 @@ src/
 tests/
   unit/             Um arquivo de teste por padrão + serviço + repositório
   integration/       Teste do endpoint REST via app.inject (Fastify)
-diagrama-classes.puml   Diagrama de classes (PlantUML) dos 4 padrões
 ```
 
 ## Como rodar
@@ -91,9 +87,7 @@ npm run test:coverage # roda com relatório de cobertura (v8)
 
 ## Compatibilidade de plataforma
 
-Testado para rodar em Windows 10+ e Linux Ubuntu 24.04+ (e derivados),
-por depender apenas do runtime Node.js (LTS) e de pacotes npm
-multiplataforma (Fastify, TypeScript, Vitest).
+Testado para rodar em Windows 10+ e Linux Ubuntu 24.04.
 
 
 ## ATVIII — Adapter, Composite e Decorator
@@ -168,11 +162,3 @@ Exemplo (`POST /projetos/recomendacoes`):
   compartilhados entre requisições. Sem política, nada é aplicado (comportamento anterior).
 - Para usar a pilha sem alterar o serviço, `gerarRecomendacao` aceita `estrategia` (instância pronta); a precedência é
   `estrategia` > `nomeEstrategia` > `definirEstrategia`.
-
-### Compatibilidade de plataforma
-
-Apenas Node.js (>= 20) e pacotes npm multiplataforma. Caminhos usam `path`/`os.tmpdir()` e ids de arquivo usam sempre `/`.
-A suíte foi executada em Linux; Windows 10+ não pôde ser testado neste ambiente.
-
-> Atenção: o repositório versiona `node_modules/` (apesar do `.gitignore`), com binários nativos de Windows que impedem
-> rodar os testes no Linux. Recomenda-se `git rm -r --cached node_modules` e depois `npm ci`.
