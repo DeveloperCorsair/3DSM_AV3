@@ -18,7 +18,6 @@ export interface ServicoAtomicoDTO {
   custo: number;
   prazoDias: number;
   papel: NomePapel;
-  /** Importancia do papel (0 a 1); padrao 1. */
   peso?: number;
 }
 
@@ -32,7 +31,6 @@ export interface PacoteServicoDTO {
 
 export type ServicoDTO = ServicoAtomicoDTO | PacoteServicoDTO;
 
-/** Escolha da pilha de decorators (preferencia do produtor); a ordem e a de aplicacao. */
 export interface PoliticaRecomendacaoDTO {
   decoradores?: string[];
 }
@@ -42,12 +40,10 @@ export interface CriarProjetoDTO {
   genero: string;
   duracaoEstimadaMinutos: number;
   orcamentoTotal: number;
-  dataEntrega: string; // ISO 8601
+  dataEntrega: string;
   tipoCaptacao: TipoCaptacao;
   localizacao: { cidade: string; estado: string; pais: string };
-  /** Se omitido, e derivado dos servicos atomicos de `servicoPrincipal`. */
   papeisRequeridos?: PapelRequeridoDTO[];
-  /** Hierarquia de servicos do projeto (Composite). */
   servicoPrincipal?: ServicoDTO;
   estrategia?: string;
   politica?: PoliticaRecomendacaoDTO;

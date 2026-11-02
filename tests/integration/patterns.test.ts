@@ -49,7 +49,7 @@ function idsDosItens(itens: { profissional: { id: string } }[]): string[] {
   return itens.map((i) => i.profissional.id).sort();
 }
 
-/* ============================== ADAPTER (servico) ============================== */
+/* ADAPTER (servico) */
 
 describe("Integracao - Adapter: trocar o provedor sem alterar a logica de negocio", () => {
   let diretorioLocal: string;
@@ -92,7 +92,6 @@ describe("Integracao - Adapter: trocar o provedor sem alterar a logica de negoci
     expect(await gcs.listarArquivos("projetos/")).toHaveLength(1);
     expect(await local.listarArquivos("projetos/")).toHaveLength(1);
 
-    // a logica de negocio nao mudou: a equipe e a mesma com qualquer provedor
     const equipes = resultados.map((r) => idsDosItens(r.resultado.recomendacao.listarItens()));
     expect(equipes[1]).toEqual(equipes[0]);
     expect(equipes[2]).toEqual(equipes[0]);
@@ -231,7 +230,6 @@ describe("Integracao - Adapter: trocar o provedor sem alterar a logica de negoci
     const projeto = criarProjeto({ papeis: [new PapelRequerido("editor", 1)] });
     const { recomendacao } = await servico.gerarRecomendacao({ projeto, nomeEstrategia: "similaridade_cosseno" });
     expect(recomendacao.itemDoPapel("editor")?.profissional.id).toBe("indeed:ind-101");
-    // so ha um editor no Indeed: nao existe substituto, o item atual permanece
     await servico.substituirPapel(projeto, recomendacao, "editor", "similaridade_cosseno");
     expect(recomendacao.itemDoPapel("editor")?.profissional.id).toBe("indeed:ind-101");
   });
@@ -272,7 +270,7 @@ describe("Integracao - Adapter: trocar o provedor sem alterar a logica de negoci
   });
 });
 
-/* ============================== API HTTP (3 padroes) ============================== */
+/* API HTTP (3 padroes) */
 
 function payloadBase(extra: Partial<CriarProjetoDTO> = {}): CriarProjetoDTO {
   return {
@@ -337,14 +335,13 @@ describe("Integracao HTTP - Composite", () => {
     const corpo = resposta.json();
 
     expect(corpo.servicoPrincipal.custoTotal).toBe(2000 + 1800 + 3000 + 2500);
-    // efeitos = 6 + 4 = 10; acabamento (paralela) = max(4, 10) = 10; pos-producao = 5 + 10
     expect(corpo.servicoPrincipal.prazoTotalDias).toBe(15);
     expect(corpo.servicoPrincipal.estrutura.subservicos[1].subservicos[1]).toMatchObject({
       nome: "efeitos",
       custo: 5500,
       prazoDias: 10,
     });
-    // papeis derivados das folhas, sem repeticao (efeitos_visuais aparece em 2 servicos)
+
     const papeis = corpo.itens.map((i: { papel: string }) => i.papel).sort();
     expect(papeis).toEqual(["editor", "efeitos_visuais", "sonoplasta"]);
     expect(corpo.validacao.valido).toBe(true);
@@ -449,13 +446,12 @@ describe("Integracao HTTP - Adapter e Decorator", () => {
     const primeira = await app.inject({ method: "POST", url: "/projetos/recomendacoes", payload: corpoEquipe({ politica }) as object });
     expect(primeira.statusCode).toBe(201);
     expect(primeira.json().politicaAplicada).toEqual(["cache", "auditoria", "compressao"]);
-    expect(recursos.cache.tamanho()).toBe(2); // um por papel
+    expect(recursos.cache.tamanho()).toBe(2);
 
     const segunda = await app.inject({ method: "POST", url: "/projetos/recomendacoes", payload: corpoEquipe({ politica }) as object });
     expect(segunda.statusCode).toBe(201);
-    // projetos novos (ids diferentes) reutilizaram as mesmas entradas
     expect(recursos.cache.tamanho()).toBe(2);
-    expect(recursos.sorvedouroAuditoria.registros).toHaveLength(4); // 2 requisicoes x 2 papeis
+    expect(recursos.sorvedouroAuditoria.registros).toHaveLength(4);
     expect(metricas).toHaveLength(4);
 
     // o resultado e identico com e sem decorators
@@ -480,7 +476,7 @@ describe("Integracao HTTP - Adapter e Decorator", () => {
 
     await enviar(["cache"]);
     expect(recursos.cache.tamanho()).toBe(2);
-    expect(recursos.sorvedouroAuditoria.registros).toHaveLength(2); // auditoria nao estava na pilha
+    expect(recursos.sorvedouroAuditoria.registros).toHaveLength(2);
   });
 
   it("Decorator: usa a politica padrao do servidor quando a requisicao nao informa a sua", async () => {
@@ -499,7 +495,7 @@ describe("Integracao HTTP - Adapter e Decorator", () => {
   });
 });
 
-/* ============================ Composition root / ambiente ============================ */
+/* Composition root / ambiente */
 
 describe("Composition root: configuracao por variaveis de ambiente", () => {
   const variaveis = [
@@ -509,6 +505,7 @@ describe("Composition root: configuracao por variaveis de ambiente", () => {
     "CINEBRIDGE_DECORADORES",
     "CINEBRIDGE_DIRETORIO_ARQUIVOS",
   ];
+  
   const original = Object.fromEntries(variaveis.map((v) => [v, process.env[v]]));
   afterEach(() => {
     for (const v of variaveis) {

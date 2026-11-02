@@ -23,10 +23,8 @@ import { chamarProvedor, ErroIntegracaoExterna } from "./errors";
  * esperam receber.
  */
 export interface CriteriosProfissional {
-  /** Profissionais que atendam a pelo menos um destes papeis. */
   papeis?: NomePapel[];
   cidade?: string;
-  /** Preco minimo do profissional nao pode exceder este valor. */
   precoMaximo?: number;
 }
 
@@ -36,7 +34,7 @@ export interface AdaptadorProfissional {
   registrarAvaliacao(id: string, avaliacao: Avaliacao): Promise<void>;
 }
 
-/** Aplica os criterios padronizados; todos os adaptadores usam a mesma regra. */
+/** Aplica os criterios padronizados */
 export function aplicarCriterios(
   profissionais: Profissional[],
   criterios: CriteriosProfissional = {}
@@ -70,7 +68,7 @@ function extrairIdExterno(provedor: string, id: string): string {
   return id.slice(prefixo.length);
 }
 
-/* ---------------------------------- LinkedIn ---------------------------------- */
+/* LinkedIn */
 
 const HABILIDADE_POR_PAPEL: Record<NomePapel, string> = {
   diretor: "Directing",
@@ -130,7 +128,7 @@ export class AdaptadorLinkedIn implements AdaptadorProfissional {
   }
 }
 
-/* ----------------------------------- Indeed ----------------------------------- */
+/* Indeed */
 
 const CARGO_POR_PAPEL: Record<NomePapel, string> = {
   diretor: "Film Director",
@@ -194,7 +192,7 @@ export class AdaptadorIndeed implements AdaptadorProfissional {
   }
 }
 
-/* ---------------------------------- Interno ----------------------------------- */
+/* Interno */
 
 /** Expoe a base propria de profissionais (repositorio) pela mesma interface das fontes externas. */
 export class AdaptadorInterno implements AdaptadorProfissional {

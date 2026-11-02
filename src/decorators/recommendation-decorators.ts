@@ -49,7 +49,7 @@ export abstract class DecoradorRecomendacao implements EstrategiaRecomendacao {
   }
 }
 
-/* ----------------------------------- Cache ------------------------------------ */
+/* Cache */
 
 /** O que e guardado: so identificadores e pontuacoes, nunca os objetos do dominio. */
 export type PontuacaoEmCache = { profissionalId: string; pontuacao: number }[];
@@ -194,7 +194,7 @@ export class CacheDecorator extends DecoradorRecomendacao {
   }
 }
 
-/* --------------------------------- Auditoria ---------------------------------- */
+/* Auditoria */
 
 export interface RegistroChamadaRecomendacao {
   timestamp: Date;
@@ -265,12 +265,11 @@ export class AuditoriaDecorator extends DecoradorRecomendacao {
   }
 }
 
-/* -------------------------------- Compressao ---------------------------------- */
+/* Compressao */
 
 export interface MetricasCompressao {
   tamanhoOriginalBytes: number;
   tamanhoComprimidoBytes: number;
-  /** comprimido / original: quanto menor, melhor. */
   taxa: number;
 }
 

@@ -8,7 +8,7 @@ import { createHash } from "crypto";
  * Adapter: nada aqui conhece as interfaces do CineBridge.
  */
 
-/** Estilo Amazon S3 (aws-sdk): Bucket/Key em PascalCase e respostas em objetos. */
+/** Estilo Amazon S3 (aws-sdk). */
 export class ClienteS3Simulado {
   private readonly objetos = new Map<string, Buffer>();
 
@@ -44,7 +44,7 @@ export class ClienteS3Simulado {
   }
 }
 
-/** Estilo Google Cloud Storage (@google-cloud/storage): bucket().file().save()/download(). */
+/** Estilo Google Cloud Storage (@google-cloud/storage). */
 export class ClienteGoogleCloudSimulado {
   private readonly armazem = new Map<string, Buffer>();
 

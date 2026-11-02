@@ -68,7 +68,7 @@ export function construirApp(dependencias: Dependencias = construirDependencias(
   return app;
 }
 
-/* istanbul ignore next -- ponto de entrada do processo, nao coberto por testes unitarios */
+/* ponto de entrada do processo, nao coberto por testes unitarios */
 if (require.main === module) {
   const app = construirApp();
   const porta = Number(process.env.PORT ?? 3000);

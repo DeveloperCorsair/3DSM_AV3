@@ -31,7 +31,6 @@ import { Barramento, NomeEvento } from "../events/event-bus";
 
 export interface EntradaGerarRecomendacao {
   projeto: Projeto;
-  /** Nome de uma estrategia registrada na fabrica. */
   nomeEstrategia?: string;
   /**
    * Estrategia ja montada (ex.: uma pilha de decorators). Tem precedencia
@@ -45,9 +44,8 @@ export interface SaidaGerarRecomendacao {
   recomendacao: Recomendacao;
   validacao: ResultadoValidacao;
   relatorio: RelatorioEquipe;
-  /** Identificador do relatorio salvo no armazenamento configurado (se houver). */
+  /** Identificador do relatorio salvo no armazenamento configurado. */
   arquivoRelatorioId?: string;
-  /** Preenchido quando o armazenamento falhou; a recomendacao em si nao e afetada. */
   erroArquivamento?: string;
 }
 
@@ -349,9 +347,5 @@ export class ServicoRecomendacaoEquipe {
   }
 }
 
-/**
- * Nome usado no enunciado da atividade para o servico de recomendacao:
- * e o mesmo `ServicoRecomendacaoEquipe`, exportado tambem com este nome.
- */
 export const SistemaRecomendacao = ServicoRecomendacaoEquipe;
 export type SistemaRecomendacao = ServicoRecomendacaoEquipe;

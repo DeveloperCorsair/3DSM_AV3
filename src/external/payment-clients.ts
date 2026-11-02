@@ -87,7 +87,7 @@ export class ClientePagSeguroSimulado {
   }
 }
 
-/** Estilo PayPal Orders API: purchase_units aninhadas, valor em texto e status em maiusculas. */
+/** Estilo PayPal Orders API: valor em texto e status em maiusculas. */
 export class ClientePayPalSimulado {
   private readonly ordens = new Map<string, { status: string }>();
 

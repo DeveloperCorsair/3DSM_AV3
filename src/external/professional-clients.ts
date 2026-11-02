@@ -8,12 +8,11 @@ function clonar<T>(valor: T): T {
   return JSON.parse(JSON.stringify(valor)) as T;
 }
 
-/* ---------------------------------- LinkedIn ---------------------------------- */
+/* LinkedIn */
 
 export interface PerfilLinkedIn {
   urn: string;
   fullName: string;
-  /** Habilidades em ingles; endorsements indicam a forca de cada uma (0 a 100). */
   skills: { name: string; endorsements: number }[];
   location: { city: string; state: string; country: string };
   rateRange: { from: number; to: number };
@@ -97,7 +96,7 @@ export class ApiLinkedInSimulada {
   }
 }
 
-/* ----------------------------------- Indeed ----------------------------------- */
+/*  Indeed  */
 
 export interface CandidatoIndeed {
   candidateId: string;

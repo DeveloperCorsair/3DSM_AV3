@@ -71,7 +71,7 @@ export class FabricaPilhaRecomendacao {
     }
   }
 
-  /** Le uma politica de texto, ex.: "cache,auditoria,compressao" (variavel de ambiente). */
+  /** Le uma politica de texto. */
   static politicaDeTexto(texto: string | undefined): PoliticaRecomendacao {
     const decoradores = (texto ?? "")
       .split(",")

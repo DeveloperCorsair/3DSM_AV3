@@ -6,13 +6,12 @@ import {
 } from "../domain/entities";
 
 /**
- * Padrao Strategy: encapsula diferentes algoritmos de recomendacao
+ * Encapsula diferentes algoritmos de recomendacao
  * de profissionais para os papeis de um projeto. Cada estrategia
  * concreta implementa apenas a logica de pontuacao/selecao, mantendo
  * a mesma interface para o orquestrador (Template Method) que a invoca.
  */
 export interface EstrategiaRecomendacao {
-  /** Nome usado para selecionar a estrategia dinamicamente (ex.: na criacao do projeto). */
   readonly nome: string;
 
   /**
@@ -100,7 +99,7 @@ export class EstrategiaOrcamentoReduzido implements EstrategiaRecomendacao {
   }
 }
 
-/** Fabrica simples para resolver a estrategia pelo nome (selecao dinamica). */
+/** Fabrica simples para resolver a estrategia pelo nome. */
 export class FabricaEstrategiaRecomendacao {
   private static readonly registro = new Map<string, EstrategiaRecomendacao>([
     ["similaridade_cosseno", new EstrategiaSimilaridadeCosseno()],

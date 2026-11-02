@@ -35,13 +35,11 @@ export interface Dependencias {
   observadorMensagemInterna: ObservadorMensagemInterna;
   observadorAuditoria: ObservadorAuditoria;
   repositorioProfissionaisSeed: RepositorioProfissionaisEmMemoria;
-  /** Adaptadores efetivamente em uso (armazenamento, pagamento, fonte de profissionais). */
+  /** Adaptadores (armazenamento, pagamento, fonte de profissionais). */
   adaptadores: Required<Adaptadores>;
-  /** Monta a pilha de decorators de uma estrategia a partir de uma politica. */
   fabricaPilha: FabricaPilhaRecomendacao;
   /** Politica usada quando a requisicao nao informa a sua. */
   politicaPadrao: PoliticaRecomendacao;
-  /** Trilha de auditoria e metricas gravadas pelos decorators. */
   auditoriaDecorators: SorvedouroAuditoriaEmMemoria;
   metricasCompressao: MetricasCompressao[];
 }
@@ -80,13 +78,6 @@ function criarProfissionalExemplo(
 
 /**
  * Cria o container de dependencias com dados de exemplo para desenvolvimento local.
- *
- * Provedores e decorators vem de variaveis de ambiente (ou de `opcoes`):
- *   CINEBRIDGE_ARMAZENAMENTO  s3 | google_cloud | local   (padrao: local)
- *   CINEBRIDGE_PAGAMENTO      stripe | pagseguro | paypal (padrao: stripe)
- *   CINEBRIDGE_PROFISSIONAIS  interno | linkedin | indeed (padrao: interno)
- *   CINEBRIDGE_DECORADORES    ex.: "cache,auditoria,compressao" (padrao: nenhum)
- *   CINEBRIDGE_DIRETORIO_ARQUIVOS  pasta do armazenamento "local"
  */
 export function construirDependencias(opcoes: OpcoesDependencias = {}): Dependencias {
   const repositorioProfissionaisSeed = new RepositorioProfissionaisEmMemoria([
