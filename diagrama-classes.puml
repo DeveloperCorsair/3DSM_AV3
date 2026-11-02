@@ -1,0 +1,169 @@
+@startuml cinebridge-team-recommendation
+
+title CineBridge - Microsservico de Recomendacao e Orquestracao de Equipes
+
+package "Dominio" {
+  class Projeto {
+    +id: string
+    +genero: string
+    +orcamentoTotal: number
+    +dataEntrega: Date
+    +papeisRequeridos: PapelRequerido[]
+    +orcamentoPorPapel(): number
+  }
+  class PapelRequerido {
+    +nome: NomePapel
+    +peso: number
+  }
+  class Profissional {
+    +id: string
+    +especialidades: NomePapel[]
+    +faixaPreco: FaixaPreco
+    +competencias: VetorCompetencia
+    +historico: Avaliacao[]
+    +notaMedia(): number
+    +atendePapel(papel): boolean
+  }
+  class VetorCompetencia {
+    +similaridadeCosseno(outro, papeis): number
+  }
+  class Avaliacao {
+    +nota: number
+  }
+  class Convite {
+    +status: StatusConvite
+    +aceitar(): void
+    +recusar(): void
+  }
+  class Recomendacao {
+    +status: StatusRecomendacao
+    +listarItens(): ItemRecomendacao[]
+    +substituirPapel(item): void
+    +custoTotalEstimado(): number
+  }
+  class ItemRecomendacao {
+    +papel: NomePapel
+    +profissional: Profissional
+    +pontuacao: number
+  }
+
+  Projeto "1" o-- "many" PapelRequerido
+  Profissional "1" *-- "1" VetorCompetencia
+  Profissional "1" o-- "many" Avaliacao
+  Recomendacao "1" o-- "many" ItemRecomendacao
+  ItemRecomendacao --> Profissional
+}
+
+package "Strategy" {
+  interface EstrategiaRecomendacao {
+    +nome: string
+    +recomendar(projeto, papel, candidatos): ItemRecomendacao[]
+  }
+  class EstrategiaSimilaridadeCosseno
+  class EstrategiaFiltragemColaborativa
+  class EstrategiaOrcamentoReduzido
+  class FabricaEstrategiaRecomendacao {
+    +{static} obter(nome): EstrategiaRecomendacao
+  }
+
+  EstrategiaRecomendacao <|.. EstrategiaSimilaridadeCosseno
+  EstrategiaRecomendacao <|.. EstrategiaFiltragemColaborativa
+  EstrategiaRecomendacao <|.. EstrategiaOrcamentoReduzido
+  FabricaEstrategiaRecomendacao ..> EstrategiaRecomendacao
+}
+
+package "Template Method" {
+  abstract class OrquestradorComposicaoEquipe {
+    +compor(projeto, candidatos, estrategia): Recomendacao
+    #validarRestricoes(projeto): void
+    #normalizarEntrada(candidatos): Map
+    #{abstract} selecionarMelhorCandidato(papel, ranqueados): ItemRecomendacao
+    #{abstract} posProcessar(recomendacao, projeto): Recomendacao
+  }
+  class OrquestradorPadrao
+  class OrquestradorComDiversidade
+
+  OrquestradorComposicaoEquipe <|-- OrquestradorPadrao
+  OrquestradorComposicaoEquipe <|-- OrquestradorComDiversidade
+  OrquestradorComposicaoEquipe ..> EstrategiaRecomendacao : usa >
+  OrquestradorComposicaoEquipe ..> Recomendacao : cria >
+}
+
+package "Observer" {
+  interface ObservadorRecomendacao {
+    +aoGerarRecomendacao(recomendacao): void
+    +aoAtualizarConvite(convite): void
+  }
+  class SujeitoRecomendacao {
+    +inscrever(observador): void
+    +notificarRecomendacaoGerada(recomendacao): void
+    +notificarConviteAtualizado(convite): void
+  }
+  class ObservadorEmail
+  class ObservadorMensagemInterna
+  class ObservadorAuditoria
+
+  ObservadorRecomendacao <|.. ObservadorEmail
+  ObservadorRecomendacao <|.. ObservadorMensagemInterna
+  ObservadorRecomendacao <|.. ObservadorAuditoria
+  SujeitoRecomendacao o-- "many" ObservadorRecomendacao
+}
+
+package "Visitor" {
+  interface "VisitanteRecomendacao<R>" as VisitanteRecomendacao {
+    +visitarProjeto(projeto, recomendacao): R
+  }
+  class VisitanteValidacaoConsistencia
+  class VisitanteCompatibilidadeEquipe
+  class VisitanteRelatorioEquipe
+
+  VisitanteRecomendacao <|.. VisitanteValidacaoConsistencia
+  VisitanteRecomendacao <|.. VisitanteCompatibilidadeEquipe
+  VisitanteRecomendacao <|.. VisitanteRelatorioEquipe
+  VisitanteRelatorioEquipe ..> VisitanteCompatibilidadeEquipe
+}
+
+package "Infraestrutura" {
+  interface RepositorioProfissionais {
+    +buscarTodos(): Profissional[]
+    +buscarPorId(id): Profissional
+  }
+  class RepositorioProfissionaisEmMemoria
+  class RepositorioProfissionaisTolerranteAFalhas
+  interface Barramento {
+    +publicar(nome, payload): void
+    +assinar(nome, ouvinte): void
+  }
+  class BarramentoEmMemoria
+
+  RepositorioProfissionais <|.. RepositorioProfissionaisEmMemoria
+  RepositorioProfissionais <|.. RepositorioProfissionaisTolerranteAFalhas
+  RepositorioProfissionaisTolerranteAFalhas o--> RepositorioProfissionais : decora >
+  Barramento <|.. BarramentoEmMemoria
+}
+
+package "Aplicacao" {
+  class ServicoRecomendacaoEquipe {
+    +gerarRecomendacao(entrada): SaidaGerarRecomendacao
+    +substituirPapel(...): Recomendacao
+    +registrarRespostaConvite(convite, aceitar): void
+    +registrarComposicaoFinal(projeto, recomendacao): void
+  }
+
+  ServicoRecomendacaoEquipe --> RepositorioProfissionais
+  ServicoRecomendacaoEquipe --> SujeitoRecomendacao
+  ServicoRecomendacaoEquipe --> Barramento
+  ServicoRecomendacaoEquipe --> OrquestradorComposicaoEquipe
+  ServicoRecomendacaoEquipe --> VisitanteValidacaoConsistencia
+  ServicoRecomendacaoEquipe --> VisitanteRelatorioEquipe
+}
+
+package "API REST (Fastify)" {
+  class AppFastify {
+    +POST /projetos/recomendacoes
+    +GET /saude
+  }
+  AppFastify --> ServicoRecomendacaoEquipe
+}
+
+@enduml

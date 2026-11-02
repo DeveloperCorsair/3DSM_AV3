@@ -1,0 +1,36 @@
+{
+  "name": "cinebridge-team-recommendation-service",
+  "version": "1.0.0",
+  "description": "Microsservico de recomendacao e orquestracao de equipes da plataforma CineBridge",
+  "main": "dist/server/app.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server/app.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server/app.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "tsc --noEmit -p tsconfig.test.json"
+  },
+  "keywords": [
+    "cinebridge",
+    "recomendacao",
+    "microservico",
+    "design-patterns"
+  ],
+  "author": "CineBridge",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "fastify": "^4.28.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@vitest/coverage-v8": "^1.6.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
